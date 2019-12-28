@@ -19,7 +19,9 @@ class Player {
 	constructor(name, color) {
 		this.name = name;
 		this.color = color;
+		this.pieces = [];
 	}
+	pieces
 }
 
 //---------Game Classes----------------------------------
@@ -43,6 +45,10 @@ class GameCheckers extends Game {
 	populateBoard(){		
 		populateBoardCheckers(this.board);
 	}
+
+	moveProcedure(player) {
+		moveProcedureChechkers(player, this.board)
+	}
 }
 
 class GameKnightChase extends Game {
@@ -51,8 +57,12 @@ class GameKnightChase extends Game {
 	}
 	
 	populateBoard(){
-		populateBoardTwoKnights();
+		populateBoardKnightChase(this.board);
 	}
+	moveProcedure(player) {
+		moveProcedureKnightChase(player, this.board)
+	}
+	
 }
 
 class GameChess extends Game {
@@ -61,14 +71,14 @@ class GameChess extends Game {
 	}
 	
 	populateBoard(){
-		populateBoardChess();
+		populateBoardChess(this.board);
 	}
 }
 
 //---------Piece Classes----------------------------------
 
 class Piece {
-	constructor(color, ver, hor) {
+	constructor(color, hor, ver) {
 		this.color = color;
 		this.ver = ver;
 		this.hor = hor;
@@ -78,18 +88,43 @@ class Piece {
 }
 
 class CheckerPiece extends Piece {
-	constructor(color, ver, hor) {
-		super(color, ver, hor)
+	constructor(color, hor, ver) {
+		super(color, hor, ver)
 	}
-	eligibleMoves() {
+	eligibleMoves() {		
 		let moveArray = [];
-		let d = (this.color === 'white') ? 1 : -1;			//this is a direction 
-		moveArray.push([this.ver+d,this.hor+1]);
-		moveArray.push([this.ver+d,this.hor-1]);
+		let d = (this.color === 'white') ? 1 : -1;			//'d' is a movement direction 
+		if (withinBoard(this.hor+1 , this.ver+d)){
+			moveArray.push([this.hor+1 , this.ver+d]);
+		}
+		
+		if (withinBoard(this.hor-1 , this.ver+d)){
+			moveArray.push([this.hor-1 , this.ver+d]);
+		}
+		
 		return (moveArray)
 	}
 	character() {
 		return((this.color === 'white') ? '\u26c0' : '\u26c2')
+	}
+}
+
+class KnightPiece extends Piece {
+	constructor(color, hor, ver) {
+		super(color, hor, ver)
+	}
+	eligibleMoves() {
+		const vectors = [[-1,-2],[-2,-1],[-2,1],[-1,2],[1,2],[2,1],[2,-1],[1,-2]];
+		let moveArray = [];
+			for(const vec of vectors){
+				if (withinBoard(this.hor+vec[0] , this.ver+vec[1])){
+					moveArray.push([this.hor+vec[0] , this.ver+vec[1]]);
+				}
+			}
+		return (moveArray)
+	}
+	character() {
+		return((this.color === 'white') ? '\u2658' : '\u265e')
 	}
 }
 
