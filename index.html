@@ -19,10 +19,10 @@
 				<p>Player 1: <input type="text" id="player1Name" value="Sasha"></p>
 				<p>Player 2: <input type="text" id="player2Name" value="Julia"></p>
 				<p> Select game type
-					<select id="gameType">					  
-					  <option value="knightChase">Knight Chase</option>
+					<select id="gameType">					  					  
 					  <option value="checkers">Checkers</option>
 					  <option value="chess">Chess</option>
+					  <option value="knightChase">Knight Chase</option>
 					</select>
 				</p>
 				<button onclick="onGameStart()">Start New Game</button>
@@ -136,8 +136,13 @@
 		</div>
 		
 		
-		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="classes.js"></script>
-		<script src="functions.js"></script>
+		<script src="main_functions.js"></script>
+		<script src="shared_functions.js"></script>
+		<script src="checkers_functions.js"></script>
+		<script src="knightChase_functions.js"></script>
+		<script src="jquery-selectors.js"></script>
+		
 	</body>
 </html>

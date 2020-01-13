@@ -43,11 +43,28 @@
 }
 
 .populated:hover {
-  background-color: lightblue;
   cursor: pointer;
 }
 
-.activePiece:hover {
-	background-color:lightgreen;
+.activePiece {
+	background-color:lightblue;
 	cursor: pointer;
   }
+ 
+.selectedPiece {
+	background-color:lightgreen;
+}
+  
+.possibleDestination {
+	background-color: rgb(51, 204, 51);
+	cursor: pointer;
+}
+
+.selectedDestination {
+	background-color:green;
+}
+
+.movedPiece {
+	background-color:lightblue;
+	cursor: pointer;
+}
