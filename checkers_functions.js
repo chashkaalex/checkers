@@ -178,9 +178,9 @@ let pieceHasMovesCheckers = (piece, board) => {
 	let result = false;
 	let pieceMoves = piece.eligibleMoves(false)
 	if (piece.isKing) {
-		if (getKingMovesCheckers(board, piece).moves.length>0){
-			result = true;
-		}
+		let kingMoves = getKingMovesCheckers(board, piece);
+		let kingMovesNum = kingMoves.moves.length + kingMoves.jumps.length;
+		if (kingMovesNum){result = true;}
 	} else {
 		for (const move of piece.eligibleMoves(false)) {
 			//console.log("	"+move[0],move[1]);
@@ -208,6 +208,7 @@ let pieceCanMoveCheckers = (board, move, piece) => {
 let filterJumps = (activePieces, board) => {
 	$(".activePiece").removeClass("activePiece");
 	let filtered = [];	
+	//debugger;
 	for (const piece of activePieces){
 		if(piece.isKing) {
 			let jumps = getKingMovesCheckers(board, piece).jumps
