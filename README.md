@@ -1,3 +1,3 @@
 # checkers
-repository of the checkers game project
-this repository is deployed on jscheckers.netlify.com
+Thisis the repository of the checkers (and in future other board games) project.
+This repository is deployed on jscheckers.netlify.com
