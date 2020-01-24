@@ -1,6 +1,6 @@
-const whiteMan = '\u26c0';
-const whiteKing = '\u26c1';
-const blackMan = '\u26c2';
+const whiteMan = String.fromCharCode(parseInt('26c0', 16))			// '\u26c0';
+const whiteKing = String.fromCharCode(parseInt('26c1', 16))			//'\u26c1';
+const blackMan = String.fromCharCode(parseInt('26c2', 16))			//'\u26c2';
 const blackKing = '\u26c3';
 const blackKnight = '\u265e'
 const whiteKnight = '\u2658' 
@@ -8,8 +8,7 @@ const whiteKnight = '\u2658'
 
 
 class ChessBoard {
-	constructor() {
-		
+	constructor() {		
 		this.contents = [["1,1", "1,2", "1,3", "1,4", "1,5", "1,6", "1,7", "1,8"],
 						 ["2,1", "2,2", "2,3", "2,4", "2,5", "2,6", "2,7", "2,8"],
 						 ["3,1", "3,2", "3,3", "3,4", "3,5", "3,6", "3,7", "3,8"],
@@ -19,19 +18,16 @@ class ChessBoard {
 						 ["7,1", "7,2", "7,3", "7,4", "7,5", "7,6", "7,7", "7,8"],
 						 ["8,1", "8,2", "8,3", "8,4", "8,5", "8,6", "8,7", "8,8"]]
 	}
-	
-	
 }
 
 class Player {
 	constructor(name, color, board) {
 		this.name = name;
 		this.color = color;
-		this.board = board;
-		
+		this.board = board;		
 	}
 	pieces() {
-		let playerPieces = [];
+		const playerPieces = [];
 		this.board.contents.flat().forEach((tile) => {
 			if(typeof  tile === 'object'){								
 				let thePiece = tile;					//this is made for  readability purposes only
@@ -53,10 +49,8 @@ class Game {
 		this.player1 = new Player(player1Name, 'white', this.board);
 		this.player2 = new Player(player2Name, 'black', this.board);		
 		this.numOfMoves = 0;
-		this.isEnded = false;
-	}
-		
-	endGame(){}		
+	}		
+	isEnded = false;		
 }
 
 class GameCheckers extends Game {
@@ -68,7 +62,6 @@ class GameCheckers extends Game {
 	}
 
 	async moveProcedure(game, player) {
-		//console.log("Starting to wait for the 'moveProcedureCheckers'")
 		await moveProcedureCheckers(game, player)
 	}
 }
@@ -90,8 +83,7 @@ class GameKnightChase extends Game {
 class GameChess extends Game {
 	constructor(player1Name, player2Name) {
 		super(player1Name, player2Name)
-	}
-	
+	}	
 	populateBoard(){
 		populateBoardChess(this.board);
 	}
@@ -103,8 +95,7 @@ class Piece {
 	constructor(color, hor, ver) {
 		this.color = color;
 		this.ver = ver;
-		this.hor = hor;
-		this.isAlive = true;		
+		this.hor = hor;		
 	}
 	contElem() {
 		return document.getElementById((this.hor)+','+(this.ver));
@@ -113,17 +104,11 @@ class Piece {
 
 class CheckerPiece extends Piece {
 	constructor(color, hor, ver) {
-		super(color, hor, ver)
-		
-	}
-	
-	isKing = false;
-	
+		super(color, hor, ver)		
+	}	
+	isKing = false;	
 	coords() {
-		return {
-			hor: this.hor,
-			ver: this.ver
-		};
+		return {hor: this.hor, ver: this.ver};
 	}
 	
 	d() {
@@ -131,7 +116,7 @@ class CheckerPiece extends Piece {
 	}
 	
 	eligibleMoves(chainMove) {		//chainmove is a boolean that determines if current move is a chain and thus the piece can also move backwards
-		let moveArray = [];			//it also can be used (as it is no) to exercise the 'striking back' rule if needed.	
+		const moveArray = [];			//it also can be used (as it is now) to exercise the 'striking back' rule if needed.	
 		if (this.isKing) {
 			for(let i=1;i<8;i++) {
 				if (withinBoard(this.hor+i , this.ver+i)){			
@@ -192,14 +177,6 @@ class KnightPiece extends Piece {
 		return (moveArray)
 	}
 	character() {
-		return((this.color === 'white') ? '\u2658' : '\u265e')
+		return((this.color === 'white') ? whiteKnight : blackKnight)
 	}
 }
-
-class Tile {							//this class isn't used. Implementing it will not make things easier or more concise.
-	constructor(hor, ver) {		
-		this.hor = hor;
-		this.ver = ver;
-	}
-}
-

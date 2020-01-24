@@ -1,46 +1,46 @@
-let emptyTheBoard = (board) => {
-	let boardElement;
-	let coordString = "";
-	let pieceToPut = "";
-	for(let ver=8;ver>0;ver--){
-		for(let hor=1;hor<9;hor++){			
-			coordString = hor+','+ver;
-			board.contents[hor-1][ver-1] = coordString;
-			//console.log(coordString);
-			boardElement = document.getElementById(coordString);
-			boardElement.innerHTML = "";
-
-		}		
-	}
+const letThemPlay = async (game, player) => {		
+	let i = 1;
+	while(i<100) {
+		if(game.isEnded) {
+			console.log("The game has ended!");
+			moveIsCompelled = false;
+			gameReset = true;
+			return;
+		}
+		console.log("MOVE №"+i);
+		await game.moveProcedure(game, player)
+		player = (player.color === 'white') ? game.player2 : game.player1;
+		console.log("Next move: ", player.color);
+		i++;
+	}	
 }
 
-
-let randomBoardLocation = () => {
-	let randCoords = [];
-	randCoords.push(Math.floor(Math.random() * Math.floor(8))+1)
-	randCoords.push(Math.floor(Math.random() * Math.floor(8))+1)
-	
-	return randCoords
+const emptyTheBoard = () => {
+	$(".chessboard div")
+		.removeClass(
+			"activePiece",
+			"selectedPiece",
+			"possibleDestination",
+			"selectedDestination",
+			"movedPiece",
+			"populated")
+		.html("");
 }
 
-
-
-
-let getPieceHtmlElem = (piece) => {
-	let coordString = (piece.hor)+ ',' + (piece.ver);
+const getPieceHtmlElem = (piece) => {
+	const coordString = (piece.hor)+ ',' + (piece.ver);
 	//console.log('	The coords are ' + coordString)
 	return document.getElementById(coordString)
 }
 
-let getPieceFromHtmlId = (id, board) => {
+const getPieceFromHtmlId = (id, board) => {
 	//console.log("Getting the piece from the id " + id)
-	let hor = parseInt(id[0])-1;
-	let ver = parseInt(id[2])-1;
+	const hor = parseInt(id[0])-1;
+	const ver = parseInt(id[2])-1;
 	return board.contents[hor][ver];
 }
 
-
-let withinBoard = (hor, ver) => {
+const withinBoard = (hor, ver) => {
 	if(hor>0 && hor<9) {
 		if(ver>0 && ver<9){
 			return true;
@@ -49,15 +49,15 @@ let withinBoard = (hor, ver) => {
 	return false;
 }
 
-let isVacant = (board, move) => {
+const isVacant = (board, move) => {
 	if (typeof board.contents[move.hor-1][move.ver-1] === 'string'){
 		return true;
 	}
 	return false
 }
 
-let isFoe = (board, move, color) => {
-	let tile = board.contents[move.hor-1][move.ver-1];
+const isFoe = (board, move, color) => {
+	const tile = board.contents[move.hor-1][move.ver-1];
 	if(typeof  tile === 'object'){
 		if(tile.color !== color) {
 			return true;
@@ -66,12 +66,11 @@ let isFoe = (board, move, color) => {
 	return false;
 }
 
-let canJump = (board, move, piece) => {								//This function chechks is the piece can jump and if it can,
+const canJump = (board, move, piece) => {							//This function chechks is the piece can jump and if it can,
 	let jumpMove = {												// it modifies the destination ('move') appropriately
 		hor: (move.hor>piece.hor) ? move.hor+1 : move.hor-1,
 		ver: (move.ver>piece.ver) ? move.ver+1 : move.ver-1
-	};
-	
+	};	
 	if(withinBoard(jumpMove.hor, jumpMove.ver)){
 		if (isVacant(board, jumpMove)){
 			move.hor = jumpMove.hor;
@@ -79,52 +78,41 @@ let canJump = (board, move, piece) => {								//This function chechks is the pi
 			//console.log("move is now "+move.hor+","+move.ver)
 			return true;
 		}
-	}
-	
+	}	
 	return false;
 }
 
-
-
-
-let onSelectPiece = (id) => {
+const onSelectPiece = (id) => {
 	//alert(id);
 	$(".selectedPiece").removeClass("selectedPiece");
 	document.getElementById(id).classList.add("selectedPiece");
 }
 
-let onSelectDestination = (id) => {
+const onSelectDestination = (id) => {
 	//alert(id);
 	document.getElementById(id).classList.add("selectedDestination");
 }
 
-let pieceIsSelected = () => {
+const pieceIsSelected = () => {
 	return $(".chessboard div").hasClass('selectedPiece')
 }
 
-let destinationSelected = () => {
+const destinationSelected = () => {
 	return $(".chessboard div").hasClass('selectedDestination')
 }
 
-let getSelectedElem = (className) => {
+const getSelectedElem = (className) => {
 	let selectedElem = document.getElementsByClassName(className)[0];
 	return selectedElem;
 }
 
-let removePrevPosDes = () => {
+const removePrevPosDes = () => {
 	$(".possibleDestination").removeClass("possibleDestination");
 }
 
-let moveThePiece = (piece, dest, board) => {
-
-	if (piece.isKing) {
-		//debugger;
-	}
-	removeThePiece(piece.coords(), board);
-	
-	
+const moveThePiece = (piece, dest, board) => {
+	removeThePiece(piece.coords(), board);		
 	if (Math.abs(piece.ver - dest.ver)>1) {								 //checking if this move is a jump
-
 		for (let i=1;i<Math.abs(piece.hor - dest.hor);i++) {
 			let strikeCoords = {			
 				hor: piece.hor + i*((dest.hor-piece.hor)/Math.abs(dest.hor - piece.hor)),
@@ -134,7 +122,6 @@ let moveThePiece = (piece, dest, board) => {
 				removeThePiece(strikeCoords, board);
 			}
 		}
-
 	}
 	piece.hor = dest.hor;
 	piece.ver = dest.ver;
@@ -153,11 +140,10 @@ let moveThePiece = (piece, dest, board) => {
 	
 }
 
-let removeThePiece = (coords, board) => {
-	let pieceToRemove = board.contents[coords.hor-1][coords.ver-1];
-	let htmlElem = getPieceHtmlElem(pieceToRemove);
+const removeThePiece = (coords, board) => {
+	const pieceToRemove = board.contents[coords.hor-1][coords.ver-1];
+	const htmlElem = getPieceHtmlElem(pieceToRemove);
 	htmlElem.innerHTML = "";
 	htmlElem.classList.remove("populated","movedPiece");
 	board.contents[coords.hor-1][coords.ver-1] = coords.hor + "," + coords.ver;
 }
-

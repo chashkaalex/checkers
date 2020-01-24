@@ -52,3 +52,11 @@ let getPlayerActivePiecesKnightChase = (player) => {
 	}
 	console.log(player.name + ' has ' + player.activePieces.length + ' active pieces.')
 }
+
+const randomBoardLocation = () => {
+	const randCoords = [];
+	randCoords.push(Math.floor(Math.random() * Math.floor(8))+1)
+	randCoords.push(Math.floor(Math.random() * Math.floor(8))+1)
+	
+	return randCoords
+}
