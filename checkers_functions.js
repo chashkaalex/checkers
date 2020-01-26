@@ -46,7 +46,6 @@ const moveProcedureCheckers = async (game, player) => {
 	}
 	while(moveIsCompelled) {
 		if (!gameIsRunning) {
-			//console.log("resetting the game");
 			game.isEnded = true;
 			return;
 		}		
@@ -81,9 +80,8 @@ const getPlayerActivePiecesCheckers = (player) => {
 		//console.log(player.name + ' has ' + player.activePieces.length + ' active pieces before the filtering.')
 		player.activePieces = filterJumps(player.activePieces, player.board);
 	}
-	console.log(player.name + ' has ' + player.pieces().length + ' pieces total.')
-	console.log(player.name + ' has ' + player.activePieces.length + ' active pieces.')
-	//if(moveIsCompelled) {console.log("This move is compelled")}	
+	console.log(player.name + ' has ' + player.pieces().length + ' pieces total.');
+	console.log(player.name + ' has ' + player.activePieces.length + ' active pieces.');
 }
 
 const getPlayerResponseCheckers = (player) => {
@@ -99,7 +97,7 @@ const getPlayerResponseCheckers = (player) => {
 			clearInterval(hold);
 			resolve();
 		}
-		newDest = {hor: 0, ver: 0};
+		let newDest = {hor: 0, ver: 0};
 		let selElem;			
 		if (pieceIsSelected()) {
 			selElem = getSelectedElem('selectedPiece');				
@@ -110,7 +108,7 @@ const getPlayerResponseCheckers = (player) => {
 					console.log("this move is compelled");
 					drawStrikeMoves(player.board, selectedPiece, false);	
 				} else {
-					drawSimpleMoves(player.board, selectedPiece)
+					drawSimpleMoves(player.board, selectedPiece);
 				} 				
 				prevSelElem = selElem;					
 			}			
@@ -129,7 +127,7 @@ const getPlayerResponseCheckers = (player) => {
 			removePrevPosDes();
 			if(selectedPiece && newDest.hor) {
 				console.log(`Moving the piece from (${selectedPiece.hor},${selectedPiece.ver}) to (${newDest.hor},${newDest.ver})`);
-				moveThePiece(selectedPiece, newDest, player.board);
+				moveThePieceCheckers(selectedPiece, newDest, player.board);
 			} else {
 				console.log("The player didn't select a move, moving over to the next one.");
 				moveIsCompelled = false;
@@ -233,7 +231,7 @@ const getPlayerChainResponseCheckers = (player) => {
 				clearInterval(hold);
 				resolve();
 			}
-				drawStrikeMoves(player.board, selectedPiece, true)														
+				drawStrikeMoves(player.board, selectedPiece, true);														
 				if(destinationSelected()) {
 					destElem = getSelectedElem('selectedDestination');
 					newDest.hor = parseInt(destElem.id.substr(0, destElem.id.indexOf(',')));
@@ -247,12 +245,12 @@ const getPlayerChainResponseCheckers = (player) => {
 					removePrevPosDes();
 					if(selectedPiece && newDest.hor) {
 						console.log(`Moving the piece from (${selectedPiece.hor},${selectedPiece.ver}) to (${newDest.hor},${newDest.ver})`);
-						moveThePiece(selectedPiece, newDest, player.board);					
+						moveThePieceCheckers(selectedPiece, newDest, player.board);					
 					} else {
 						console.log("The player didn't select a move, moving over to the next one.");
 						moveIsCompelled = false;
 					}
-					clearMoveClasses()					
+					clearMoveClasses();					
 					resolve();
 				}			
 		}, 100);
@@ -313,7 +311,7 @@ const getKingMovesCheckers = (board, piece) => {
 	kingMoves = kingMoves.concat(kingDirMoves.moves);
 	kingJumps = kingJumps.concat(kingDirMoves.jumps);
 
-	return {moves: kingMoves, jumps: kingJumps}
+	return {moves: kingMoves, jumps: kingJumps};
 
 }
 
@@ -346,7 +344,7 @@ const getKingDirectionMoves = (board, piece, horDir, verDir) => {
 		i++;
 	}
 	console.log (`For this direction returning ${kingDirMoves.length} moves and ${kingDirJumps.length}`);
-	return {moves: kingDirMoves, jumps: kingDirJumps}
+	return {moves: kingDirMoves, jumps: kingDirJumps};
 }
 
 const clearMoveClasses = () => {
@@ -356,9 +354,31 @@ const clearMoveClasses = () => {
 	$(".selectedDestination").removeClass("selectedDestination");
 }
 
+const moveThePieceCheckers = (piece, dest, board) => {
+	removeThePiece(piece.coords(), board);		
+	if (Math.abs(piece.ver - dest.ver)>1) {								 //checking if this move is a jump
+		for (let i=1;i<Math.abs(piece.hor - dest.hor);i++) {
+			let strikeCoords = {			
+				hor: piece.hor + i*((dest.hor-piece.hor)/Math.abs(dest.hor - piece.hor)),
+				ver: piece.ver + i*((dest.ver-piece.ver)/Math.abs(dest.ver - piece.ver))
+			};	
+			if(!isVacant(board, strikeCoords)) {
+				removeThePiece(strikeCoords, board);
+			}
+		}
+	}
+	piece.hor = dest.hor;
+	piece.ver = dest.ver;
+	if (!piece.isKing) {
+		if ((piece.ver === 8 && piece.color === "white") ||
+			(piece.ver === 1 && piece.color === "black")) {
+			piece.isKing = true;
+			console.log("this piece is now a King!");
+		}		
+	}
+	htmlElem = getPieceHtmlElem(piece);
+	htmlElem.innerHTML = piece.character();
 
-
-
-
-
-
+	htmlElem.classList.add("populated","movedPiece");
+	board.contents[dest.hor-1][dest.ver-1] = piece;	
+}

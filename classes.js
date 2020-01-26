@@ -74,8 +74,8 @@ class GameKnightChase extends Game {
 	populateBoard(){
 		populateBoardKnightChase(this.board);
 	}
-	moveProcedure(game, player) {
-		moveProcedureKnightChase(game, player)
+	async moveProcedure(game, player) {
+		await moveProcedureKnightChase(game, player)
 	}
 	
 }
@@ -100,6 +100,10 @@ class Piece {
 	contElem() {
 		return document.getElementById((this.hor)+','+(this.ver));
 	}
+	
+	coords() {
+		return {hor: this.hor, ver: this.ver};
+	}
 }
 
 class CheckerPiece extends Piece {
@@ -107,16 +111,16 @@ class CheckerPiece extends Piece {
 		super(color, hor, ver)		
 	}	
 	isKing = false;	
-	coords() {
-		return {hor: this.hor, ver: this.ver};
-	}
+	// coords() {
+		// return {hor: this.hor, ver: this.ver};
+	// }
 	
 	d() {
 		return (this.color === 'white') ? 1 : -1;		//'d' is a movement direction 
 	}
 	
 	eligibleMoves(chainMove) {		//chainmove is a boolean that determines if current move is a chain and thus the piece can also move backwards
-		const moveArray = [];			//it also can be used (as it is now) to exercise the 'striking back' rule if needed.	
+		const moveArray = [];			//it also can be used to exercise the 'striking back' rule if needed.	
 		if (this.isKing) {
 			for(let i=1;i<8;i++) {
 				if (withinBoard(this.hor+i , this.ver+i)){			
@@ -162,6 +166,8 @@ class CheckerPiece extends Piece {
 	}
 }
 
+//---------Chesss Piece Classes----------------------------------
+
 class KnightPiece extends Piece {
 	constructor(color, hor, ver) {
 		super(color, hor, ver)
@@ -171,7 +177,7 @@ class KnightPiece extends Piece {
 		let moveArray = [];
 			for(const vec of vectors){
 				if (withinBoard(this.hor+vec[0] , this.ver+vec[1])){
-					moveArray.push([this.hor+vec[0] , this.ver+vec[1]]);
+					moveArray.push({hor: this.hor+vec[0] , ver: this.ver+vec[1]});
 				}
 			}
 		return (moveArray)

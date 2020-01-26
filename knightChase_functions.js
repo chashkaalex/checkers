@@ -1,62 +1,60 @@
-let populateBoardKnightChase = (board) => {		
-	emptyTheBoard(board);	
-	//creating white Knight
-	let randCoords = randomBoardLocation();        //randomly getting the coordinates
-	let ver = randCoords[0];
-	let hor = randCoords[1];
-	//console.log('rand coords are ', i, typeof i,' and ' + j, typeof j)
-	let coordString = hor+','+ver;
-	let boardHtmlElement = document.getElementById(coordString);
-	board.contents[hor-1][ver-1] = new KnightPiece('white',hor,ver);
-	boardHtmlElement.innerHTML = board.contents[hor-1][ver-1].character();
-	boardHtmlElement.classList.add("populated");
-	//creating black Knight
-	randCoords = randomBoardLocation();
-	ver = randCoords[0];
-	hor = randCoords[1];
-	coordString = hor+','+ver;
-	boardHtmlElement = document.getElementById(coordString);
-	board.contents[hor-1][ver-1] = new KnightPiece('black',hor,ver);
-	boardHtmlElement.innerHTML = board.contents[hor-1][ver-1].character();
-	boardHtmlElement.classList.add("populated");
+
+const populateBoardKnightChase = (board) => {		
+	emptyTheBoard();	
+	placeTheKnight(board, 'white');
+	placeTheKnight(board, 'black');
+	
 }
 
+const placeTheKnight = (board, color) => {
+	const randCoords = randomBoardLocation();		//randomly getting the coordinates
+	const hor = randCoords.hor;
+	const ver = randCoords.ver;
+	const coordString = hor+','+ver;
+	const boardHtmlElement = document.getElementById(coordString);
+	board.contents[hor-1][ver-1] = new KnightPiece(color, hor, ver);
+	boardHtmlElement.innerHTML = board.contents[hor-1][ver-1].character();
+}
 
-let moveProcedureKnightChase = (game, player) => {
-	getPlayerActivePiecesKnightChase(player)
-	for (const [index, piece] of player.activePieces.entries()) {
-		console.log('For piece number ' + index)
-		getPieceHtmlElem(piece).classList.add("activePiece");
+const moveProcedureKnightChase = (game, player) => {
+	if (!gameIsRunning) {
+		//console.log("resetting the game");
+		game.isEnded = true;
+		return;
 	}
-}
-
-let getPlayerActivePiecesKnightChase = (player) => {
-	for(let i = 0; i < player.board.contents.length; i++) {		
-		for (const tile of player.board.contents[i]) {
-			//console.log("after population printing pieces on board "+typeof tile);
-			if(typeof  tile === 'object'){				
-				let thePiece = tile;			//this is made for  readability purposes only
-				if(thePiece.color === player.color){
-					if(pieceHasMoves(thePiece, player.board) ){
-						let pieceElem = thePiece.contElem()
-						pieceElem.classList.add("activePiece");
-						// pieceElem.addEventListener("click", function handler(){
-							// onSelectPiece(this.id);
-							// });
-						player.activePieces.push(thePiece);
-					}
-					
+	return new Promise(function(resolve, reject) {
+	const activeKnight = player.pieces()[0];
+	const knightMoves = activeKnight.eligibleMoves()
+		setTimeout(function(){ 
+			//alert("Hello"); 
+			for (knightMove of knightMoves) {				
+				if (isFoe(player.board, knightMove, player.color)) {					
+					moveThePieceKnightChase (activeKnight, knightMove, player.board);
+					game.isEnded = true;
+					console.log("gameIsEnded is now", game.isEnded);
+					resolve();
+					return;
 				}
 			}
-		}
-	}
-	console.log(player.name + ' has ' + player.activePieces.length + ' active pieces.')
+			const randInd = Math.floor(Math.random() * Math.floor(knightMoves.length));
+			const randMove = knightMoves[randInd];
+			moveThePieceKnightChase (activeKnight, randMove, player.board);
+			resolve();
+		}, 1000);
+	});
 }
 
 const randomBoardLocation = () => {
-	const randCoords = [];
-	randCoords.push(Math.floor(Math.random() * Math.floor(8))+1)
-	randCoords.push(Math.floor(Math.random() * Math.floor(8))+1)
-	
-	return randCoords
+	const randHor = Math.floor(Math.random() * Math.floor(8))+1;
+	const randVer = Math.floor(Math.random() * Math.floor(8))+1;
+	return {hor: randHor, ver: randVer};
+}
+
+const moveThePieceKnightChase = (piece, dest, board) => {
+	removeThePiece(piece.coords(), board);		
+	piece.hor = dest.hor;
+	piece.ver = dest.ver;
+	htmlElem = getPieceHtmlElem(piece);
+	htmlElem.innerHTML = piece.character();
+	board.contents[dest.hor-1][dest.ver-1] = piece;	
 }

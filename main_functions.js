@@ -20,11 +20,11 @@ const onGameStart = async () => {
 			gameIsRunning = true;
 			break;
 		case 'knightChase':
-			alert("This game is still under construction. Please select another one");
-			// theGame = new GameKnightChase(player1, player2);
-			//gameIsRunning = true;
-			// break;
-			return
+			// alert("This game is still under construction. Please select another one");
+			theGame = new GameKnightChase(player1, player2);
+			gameIsRunning = true;
+			break;
+			// return
 		case 'chess':
 			alert("This game is still under construction. Please select another one");
 			// theGame = new GameChess(player1, player2);
@@ -43,10 +43,13 @@ const resetGame = async (value) => {
   return new Promise(function(resolve, reject) {
 	  if (gameIsRunning) {		  
 		gameReset = false;
+		console.log("resetting the game");
 		gameIsRunning = false;
 		let timer = setInterval(function(){ 
 			if(gameReset) {
 				console.log("waiting for reset");
+				emptyTheBoard();
+				clearMoveClasses();
 				clearInterval(timer);
 				resolve();
 			}

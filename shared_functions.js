@@ -3,12 +3,13 @@ const letThemPlay = async (game, player) => {
 	while(i<100) {
 		if(game.isEnded) {
 			console.log("The game has ended!");
-			moveIsCompelled = false;
 			gameReset = true;
+			moveIsCompelled = false;
+			gameIsRunning = false;
 			return;
 		}
 		console.log("MOVE №"+i);
-		await game.moveProcedure(game, player)
+		await game.moveProcedure(game, player);
 		player = (player.color === 'white') ? game.player2 : game.player1;
 		console.log("Next move: ", player.color);
 		i++;
@@ -30,7 +31,7 @@ const emptyTheBoard = () => {
 const getPieceHtmlElem = (piece) => {
 	const coordString = (piece.hor)+ ',' + (piece.ver);
 	//console.log('	The coords are ' + coordString)
-	return document.getElementById(coordString)
+	return document.getElementById(coordString);
 }
 
 const getPieceFromHtmlId = (id, board) => {
@@ -67,7 +68,7 @@ const isFoe = (board, move, color) => {
 }
 
 const canJump = (board, move, piece) => {							//This function chechks is the piece can jump and if it can,
-	let jumpMove = {												// it modifies the destination ('move') appropriately
+	const jumpMove = {												// it modifies the destination ('move') appropriately
 		hor: (move.hor>piece.hor) ? move.hor+1 : move.hor-1,
 		ver: (move.ver>piece.ver) ? move.ver+1 : move.ver-1
 	};	
@@ -101,43 +102,12 @@ const destinationSelected = () => {
 	return $(".chessboard div").hasClass('selectedDestination')
 }
 
-const getSelectedElem = (className) => {
-	let selectedElem = document.getElementsByClassName(className)[0];
-	return selectedElem;
+const getSelectedElem = (className) => {	
+	return document.getElementsByClassName(className)[0];
 }
 
 const removePrevPosDes = () => {
 	$(".possibleDestination").removeClass("possibleDestination");
-}
-
-const moveThePiece = (piece, dest, board) => {
-	removeThePiece(piece.coords(), board);		
-	if (Math.abs(piece.ver - dest.ver)>1) {								 //checking if this move is a jump
-		for (let i=1;i<Math.abs(piece.hor - dest.hor);i++) {
-			let strikeCoords = {			
-				hor: piece.hor + i*((dest.hor-piece.hor)/Math.abs(dest.hor - piece.hor)),
-				ver: piece.ver + i*((dest.ver-piece.ver)/Math.abs(dest.ver - piece.ver))
-			};	
-			if(!isVacant(board, strikeCoords)) {
-				removeThePiece(strikeCoords, board);
-			}
-		}
-	}
-	piece.hor = dest.hor;
-	piece.ver = dest.ver;
-	if (!piece.isKing) {
-		if ((piece.ver === 8 && piece.color === "white") ||
-			(piece.ver === 1 && piece.color === "black")) {
-			piece.isKing = true;
-			console.log("this piece is now a King!")
-		}		
-	}
-	htmlElem = getPieceHtmlElem(piece);
-	htmlElem.innerHTML = piece.character();
-
-	htmlElem.classList.add("populated","movedPiece");
-	board.contents[dest.hor-1][dest.ver-1] = piece;
-	
 }
 
 const removeThePiece = (coords, board) => {
