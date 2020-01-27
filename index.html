@@ -10,7 +10,7 @@
 	<body>
 		<div class="menu">
 			<hr>
-			<p>Game menu</p>
+			<p>Game Menu</p>
 			<hr>
 			<div class="controls">
 				<p>Player 1: <input type="text" id="player1Name" value="Sasha"></p>
@@ -24,6 +24,18 @@
 				</p>
 				<button onclick="onGameStart()">Start New Game</button>
 				<hr>
+				<button id="settingsButton" onclick="onOpenSettings()">Show Settings</button>
+				<div id="settings">
+					<p> Move duration (sec): <input type="number" id="moveDur" value="20"> </p>
+					<p> Max number of moves: <input type="number" id="maxMoves" value="100"> </p>
+					<p id="touchMovePar"> Touch-move rule: <input type="checkbox" id="touchMove" > </p>	
+					<span>
+						<button onclick="onResetSettings()">Reset</button>
+						<button onclick="onSaveSettings()">Save</button>
+						
+					</span>
+				</div>
+				<hr>				
 				<div ><a href="https://github.com/chashkaalex/checkers">This repo on the GitHub</a></div>				
 			</div>			
 		</div>
@@ -136,7 +148,8 @@
 		<script src="shared_functions.js"></script>
 		<script src="checkers_functions.js"></script>
 		<script src="knightChase_functions.js"></script>
-		<script src="jquery-selectors.js"></script>		
+		<script src="jquery-selectors.js"></script>
+		<script src="game-settings-functions.js"></script>		
 		
 	</body>
 </html>

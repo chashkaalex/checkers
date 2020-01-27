@@ -1,6 +1,6 @@
 const letThemPlay = async (game, player) => {		
 	let i = 1;
-	while(i<100) {
+	while(i<=maxMoves) {
 		if(game.isEnded) {
 			console.log("The game has ended!");
 			gameReset = true;

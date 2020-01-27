@@ -1,9 +1,19 @@
-const whiteMan = String.fromCharCode(parseInt('26c0', 16))			// '\u26c0';
-const whiteKing = String.fromCharCode(parseInt('26c1', 16))			//'\u26c1';
-const blackMan = String.fromCharCode(parseInt('26c2', 16))			//'\u26c2';
-const blackKing = '\u26c3';
-const blackKnight = '\u265e'
-const whiteKnight = '\u2658' 
+const whiteMan =  			String.fromCharCode(parseInt('26c0', 16));	//'\u26c0';
+const whiteKing = 			String.fromCharCode(parseInt('26c1', 16));	//'\u26c1';
+const blackMan =  			String.fromCharCode(parseInt('26c2', 16));	//'\u26c2';
+const blackKing = 			String.fromCharCode(parseInt('26c3', 16));	//'\u26c3';
+const whiteChessKing = 		'\u2654';
+const whiteQueen =     		'\u2655';
+const whiteRook =      		'\u2656';
+const whiteBishop =    		'\u2657';
+const whiteKnight =    		'\u2658';
+const whitePawn = 	   		'\u2659';
+const blackChessKing = 		'\u265a';
+const blackQueen =     		'\u265b';
+const blackRook =      		'\u265c';
+const blackBishop =    		'\u265d';
+const blackKnight =    		'\u265e';
+const blackPawn =      		'\u265f';
 
 
 
@@ -166,7 +176,7 @@ class CheckerPiece extends Piece {
 	}
 }
 
-//---------Chesss Piece Classes----------------------------------
+//---------Chess Piece Classes----------------------------------
 
 class KnightPiece extends Piece {
 	constructor(color, hor, ver) {
@@ -184,5 +194,24 @@ class KnightPiece extends Piece {
 	}
 	character() {
 		return((this.color === 'white') ? whiteKnight : blackKnight)
+	}
+}
+
+class ChessKingPiece extends Piece {
+	constructor(color, hor, ver) {
+		super(color, hor, ver)
+	}
+	eligibleMoves() {
+		const vectors = [[-1,-1],[-1,-0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-0]];
+		let moveArray = [];
+			for(const vec of vectors){
+				if (withinBoard(this.hor+vec[0] , this.ver+vec[1])){
+					moveArray.push({hor: this.hor+vec[0] , ver: this.ver+vec[1]});
+				}
+			}
+		return (moveArray);
+	}
+	character() {
+		return((this.color === 'white') ? whiteChessKing : blackChessKing);
 	}
 }

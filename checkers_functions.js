@@ -122,7 +122,7 @@ const getPlayerResponseCheckers = (player) => {
 			}
 		}		
 		timer++;					
-		if(timer>200){
+		if(timer>moveDuration*10){
 			clearInterval(hold);
 			removePrevPosDes();
 			if(selectedPiece && newDest.hor) {
@@ -240,7 +240,7 @@ const getPlayerChainResponseCheckers = (player) => {
 					timer = Infinity;
 				}							
 				timer++;							
-				if(timer>200){
+				if(timer>moveDuration*10){
 					clearInterval(hold);
 					removePrevPosDes();
 					if(selectedPiece && newDest.hor) {

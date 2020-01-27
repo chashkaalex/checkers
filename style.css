@@ -1,7 +1,7 @@
 
 .menu {
 	float: left;
-	width: 180px;
+	width: 200px;
 	height: 80vh;				
 	text-align:center;
 	padding: 15px;
@@ -9,13 +9,14 @@
 	
 }
 
+
 .controls{
 	height: 140px;
 }
 .chessboard {
 	width: 640px;
 	height: 640px;
-	margin-left: 230px;
+	margin-left: 240px;
 	margin-top: 20px;
 	border: 25px solid #333;
 }
@@ -24,7 +25,7 @@
 	width: 80px;
 	height: 80px;
 	background-color: #aaa;
-	  font-size:50px;
+	font-size:50px;
 	text-align:center;
 	display: table-cell;
 	vertical-align:middle;
@@ -67,4 +68,13 @@
 .movedPiece {
 	background-color:lightblue;
 	cursor: pointer;
+}
+
+#settings {
+    display: none;
+}
+
+#settings input {
+	width: 40px;
+	text-align: center;
 }
