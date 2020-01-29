@@ -24,14 +24,14 @@ const onOpenSettings = () => {
 	} else {
 		touchMoveSetElem.style.display = "none";
 	}
-}
+};
 
 const onSaveSettings = () => {
 	moveDuration = document.getElementById('moveDur').value;
 	maxMoves = document.getElementById('maxMoves').value;
 	touchMove = document.getElementById('touchMove').checked;
 	onOpenSettings();
-}
+};
 
 const onResetSettings = () => {	
 	moveDuration = 20;
@@ -40,7 +40,7 @@ const onResetSettings = () => {
 		touchMove = true;
 	}	
 	onOpenSettings();
-}
+};
 
 gameTypeElem.addEventListener('change', (event) => {
   onOpenSettings();

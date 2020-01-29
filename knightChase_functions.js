@@ -4,7 +4,7 @@ const populateBoardKnightChase = (board) => {
 	placeTheKnight(board, 'white');
 	placeTheKnight(board, 'black');
 	
-}
+};
 
 const placeTheKnight = (board, color) => {
 	const randCoords = randomBoardLocation();		//randomly getting the coordinates
@@ -14,11 +14,10 @@ const placeTheKnight = (board, color) => {
 	const boardHtmlElement = document.getElementById(coordString);
 	board.contents[hor-1][ver-1] = new KnightPiece(color, hor, ver);
 	boardHtmlElement.innerHTML = board.contents[hor-1][ver-1].character();
-}
+};
 
 const moveProcedureKnightChase = (game, player) => {
 	if (!gameIsRunning) {
-		//console.log("resetting the game");
 		game.isEnded = true;
 		return;
 	}
@@ -42,13 +41,13 @@ const moveProcedureKnightChase = (game, player) => {
 			resolve();
 		}, 1000);
 	});
-}
+};
 
 const randomBoardLocation = () => {
 	const randHor = Math.floor(Math.random() * Math.floor(8))+1;
 	const randVer = Math.floor(Math.random() * Math.floor(8))+1;
 	return {hor: randHor, ver: randVer};
-}
+};
 
 const moveThePieceKnightChase = (piece, dest, board) => {
 	removeThePiece(piece.coords(), board);		
@@ -57,4 +56,4 @@ const moveThePieceKnightChase = (piece, dest, board) => {
 	htmlElem = getPieceHtmlElem(piece);
 	htmlElem.innerHTML = piece.character();
 	board.contents[dest.hor-1][dest.ver-1] = piece;	
-}
+};

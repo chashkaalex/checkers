@@ -49,6 +49,8 @@
 
 .activePiece {
 	background-color:lightblue;
+	box-sizing: border-box;
+	border: 1px solid lightgreen;
 	cursor: pointer;
   }
  

@@ -17,9 +17,10 @@
 				<p>Player 2: <input type="text" id="player2Name" value="Julia"></p>
 				<p> Select game type
 					<select id="gameType">					  					  
-					  <option value="checkers">Checkers</option>
-					  <option value="chess">Chess</option>
-					  <option value="knightChase">Knight Chase</option>
+					  <option value="GameCheckers">Checkers</option>
+					  <option value="GameChess">Chess</option>
+					  <option value="GameKnightChase">Knight Chase</option>
+					  <option value="SomeGame">BlahBlah</option>
 					</select>
 				</p>
 				<button onclick="onGameStart()">Start New Game</button>
@@ -31,8 +32,7 @@
 					<p id="touchMovePar"> Touch-move rule: <input type="checkbox" id="touchMove" > </p>	
 					<span>
 						<button onclick="onResetSettings()">Reset</button>
-						<button onclick="onSaveSettings()">Save</button>
-						
+						<button onclick="onSaveSettings()">Save</button>						
 					</span>
 				</div>
 				<hr>				
@@ -147,9 +147,11 @@
 		<script src="main_functions.js"></script>
 		<script src="shared_functions.js"></script>
 		<script src="checkers_functions.js"></script>
+		<script src="chess_functions.js"></script>
 		<script src="knightChase_functions.js"></script>
 		<script src="jquery-selectors.js"></script>
-		<script src="game-settings-functions.js"></script>		
+		<script src="game-settings-functions.js"></script>
+		<script src="characters.js"></script>		
 		
 	</body>
 </html>

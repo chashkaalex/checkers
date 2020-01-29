@@ -5,28 +5,25 @@ const populateBoardCheckers = (board) => {
 	emptyTheBoard();
 	let boardHtmlElement;
 	let coordString = "";
-	for(let ver=8;ver>0;ver--){
-		for(let hor=1;hor<9;hor++){
+	for(let ver=1;ver<4;ver++) {
+		for(let hor=1;hor<9;hor++) {
 			coordString = hor+','+ver;
-			boardHtmlElement = document.getElementById(coordString);			
-			if(boardHtmlElement.classList.contains("black")){
-				//console.log(`This tile is black: ${j}, ${i}`);
-				if(ver>5){
-					board.contents[hor-1][ver-1] = new CheckerPiece('black',hor,ver);					
-					//console.log('New piece was created with coords: '+board.contents[i-1][j-1].ver, board.contents[i-1][j-1].hor)					
-					boardHtmlElement.innerHTML = board.contents[hor-1][ver-1].character();
-					boardHtmlElement.classList.add("populated");
-				}
-				if(ver<4){
-					board.contents[hor-1][ver-1] = new CheckerPiece('white',hor,ver);
-					//console.log('New piece was created with coords: '+board.contents[i-1][j-1].ver, board.contents[i-1][j-1].hor)					
-					boardHtmlElement.innerHTML = board.contents[hor-1][ver-1].character();
-					boardHtmlElement.classList.add("populated");
-				}				
+			boardHtmlElement = document.getElementById(coordString);
+			if(boardHtmlElement.classList.contains("black")) {
+				board.contents[hor-1][ver-1] = new CheckerPiece('white',hor,ver);									
+				boardHtmlElement.innerHTML = board.contents[hor-1][ver-1].character();
+				boardHtmlElement.classList.add("populated");				
 			}
-		}		
+			coordString = hor+','+(9-ver);
+			boardHtmlElement = document.getElementById(coordString);
+			if(boardHtmlElement.classList.contains("black")) {
+				board.contents[hor-1][9-ver-1] = new CheckerPiece('black',hor,(9-ver));									
+				boardHtmlElement.innerHTML = board.contents[hor-1][(9-ver-1)].character();
+				boardHtmlElement.classList.add("populated");				
+			}
+		}
 	}
-}
+};
 
 const moveProcedureCheckers = async (game, player) => {
 	//console.log("Starting moveProcedureCheckers");
@@ -44,27 +41,27 @@ const moveProcedureCheckers = async (game, player) => {
 			game.isEnded = true;
 		}
 	}
-	while(moveIsCompelled) {
-		if (!gameIsRunning) {
-			game.isEnded = true;
-			return;
-		}		
-		console.log("This move was a strike, checking the possibility of the chain move!");
+	if(!game.isEnded) {
 		const movedPieceElem = getSelectedElem("movedPiece");
 		const movedPiece = getPieceFromHtmlId(movedPieceElem.id, player.board);
-		//console.log("movedPiece element id is " + movedPieceElem.id);
-		//console.log("moved piece coordinates are " + movedPiece.coords().hor, movedPiece.coords().ver);
-		//debugger;
-		if (pieceCanStrikeCheckers(movedPiece, player.board)) {
-			console.log("This piece can strike again!");
-			await getPlayerChainResponseCheckers(player);
-		} else {
-			moveIsCompelled = false;
+		while(moveIsCompelled) {
+			if (!gameIsRunning) {
+				game.isEnded = true;
+				return;
+			}		
+			console.log("This move was a strike, checking the possibility of the chain move!");
+			if (pieceCanStrikeCheckers(movedPiece, player.board)) {
+				console.log("This piece can strike again!");
+				await getPlayerChainResponseCheckers(player);
+			} else {
+				moveIsCompelled = false;		
+			}
 		}
+		$(".movedPiece").removeClass("movedPiece");	
+		movedPiece.justMoved = false;
+		moveIsCompelled = false;		
 	}
-	$(".movedPiece").removeClass("movedPiece");				
-	moveIsCompelled = false;		
-}
+};
 
 const getPlayerActivePiecesCheckers = (player) => {
 	player.activePieces = [];		
@@ -82,7 +79,7 @@ const getPlayerActivePiecesCheckers = (player) => {
 	}
 	console.log(player.name + ' has ' + player.pieces().length + ' pieces total.');
 	console.log(player.name + ' has ' + player.activePieces.length + ' active pieces.');
-}
+};
 
 const getPlayerResponseCheckers = (player) => {
 	//console.log("Starting getPlayerResponseCheckers")	
@@ -106,9 +103,9 @@ const getPlayerResponseCheckers = (player) => {
 				selectedPiece = getPieceFromHtmlId(selElem.id, player.board);
 				if(moveIsCompelled) {
 					console.log("this move is compelled");
-					drawStrikeMoves(player.board, selectedPiece, false);	
+					drawStrikeMovesCheckers(player.board, selectedPiece);	
 				} else {
-					drawSimpleMoves(player.board, selectedPiece);
+					drawSimpleMovesCheckers(player.board, selectedPiece);
 				} 				
 				prevSelElem = selElem;					
 			}			
@@ -138,7 +135,7 @@ const getPlayerResponseCheckers = (player) => {
 		}			
 		}, 100);
 	});		
-}
+};
 
 const pieceHasMovesCheckers = (piece, board) => {
 	//console.log(`	Checking the moves for the piece on the tile (${piece.hor}, ${piece.ver})`);	
@@ -148,7 +145,7 @@ const pieceHasMovesCheckers = (piece, board) => {
 		const kingMovesNum = kingMoves.moves.length + kingMoves.jumps.length;
 		if (kingMovesNum){result = true;}
 	} else {
-		for (const move of piece.eligibleMoves(false)) {
+		for (const move of piece.eligibleMoves()) {
 			//console.log("	"+move[0],move[1]);
 			if(pieceCanMoveCheckers(board, move, piece)) {
 				result = true;
@@ -156,7 +153,7 @@ const pieceHasMovesCheckers = (piece, board) => {
 		}
 	}	
 	return result;
-}
+};
 
 const pieceCanMoveCheckers = (board, move, piece) => {
 	if(isVacant(board, move)) {
@@ -168,7 +165,7 @@ const pieceCanMoveCheckers = (board, move, piece) => {
 			return true;
 		}
 	}
-}
+};
 
 const filterJumps = (activePieces, board) => {
 	$(".activePiece").removeClass("activePiece");
@@ -191,7 +188,7 @@ const filterJumps = (activePieces, board) => {
 		}		
 	}
 	return filtered;
-}
+};
 
 const pieceCanStrikeCheckers = (piece, board) => {
 	if(piece.isKing) {
@@ -203,7 +200,7 @@ const pieceCanStrikeCheckers = (piece, board) => {
 			return false;
 		}
 	} else {
-		for (const move of piece.eligibleMoves(true)) {
+		for (const move of piece.eligibleMoves()) {
 			if (isFoe(board, move, piece.color)) {				
 				if(canJump(board, move, piece)){
 						return true;
@@ -212,7 +209,7 @@ const pieceCanStrikeCheckers = (piece, board) => {
 		}
 	}
 	return false;
-}
+};
 
 
 
@@ -231,7 +228,7 @@ const getPlayerChainResponseCheckers = (player) => {
 				clearInterval(hold);
 				resolve();
 			}
-				drawStrikeMoves(player.board, selectedPiece, true);														
+				drawStrikeMovesCheckers(player.board, selectedPiece);														
 				if(destinationSelected()) {
 					destElem = getSelectedElem('selectedDestination');
 					newDest.hor = parseInt(destElem.id.substr(0, destElem.id.indexOf(',')));
@@ -255,16 +252,16 @@ const getPlayerChainResponseCheckers = (player) => {
 				}			
 		}, 100);
 	});		
-}
+};
 
-const drawStrikeMoves = (board, piece, chainMove) => {
+const drawStrikeMovesCheckers = (board, piece) => {
 	if(piece.isKing) {
 		for (const jumpMove of getKingMovesCheckers(board, piece).jumps) {
 			const posDesElem = document.getElementById((jumpMove.hor)+','+(jumpMove.ver));
 			posDesElem.classList.add("possibleDestination");
 		}
 	} else {
-		for (const move of piece.eligibleMoves(chainMove)){
+		for (const move of piece.eligibleMoves()){
 			if (isFoe(board, move, piece.color)) {				
 				if(canJump(board, move, piece)){
 					const posDesElem = document.getElementById((move.hor)+','+(move.ver));
@@ -273,9 +270,9 @@ const drawStrikeMoves = (board, piece, chainMove) => {
 			}				
 		}
 	}	
-}
+};
 
-const drawSimpleMoves = (board, piece) => {
+const drawSimpleMovesCheckers = (board, piece) => {
 	if (piece.isKing) {
 		const kingMoves = getKingMovesCheckers(board, piece);
 		for(const kingMove of kingMoves.moves) {
@@ -283,37 +280,26 @@ const drawSimpleMoves = (board, piece) => {
 			posDesElem.classList.add("possibleDestination");							
 		}						
 	} else {
-		for (const move of piece.eligibleMoves(false)){
+		for (const move of piece.eligibleMoves()){
 			if(pieceCanMoveCheckers(board, move, piece)){
 				const posDesElem = document.getElementById((move.hor)+','+(move.ver));
 				posDesElem.classList.add("possibleDestination");
 			}
 		}						
 	}	
-}
+};
 
 const getKingMovesCheckers = (board, piece) => {
 	let kingMoves = [];
 	let kingJumps = [];
-	let kingDirMoves = getKingDirectionMoves(board, piece, 1, 1);
-	kingMoves = kingMoves.concat(kingDirMoves.moves);
-	kingJumps = kingJumps.concat(kingDirMoves.jumps);
-	
-	kingDirMoves = getKingDirectionMoves(board, piece, 1, -1);
-	kingMoves = kingMoves.concat(kingDirMoves.moves);
-	kingJumps = kingJumps.concat(kingDirMoves.jumps);	
-
-	kingDirMoves = getKingDirectionMoves(board, piece, -1, 1);
-	kingMoves = kingMoves.concat(kingDirMoves.moves);
-	kingJumps = kingJumps.concat(kingDirMoves.jumps);
-	
-	kingDirMoves = getKingDirectionMoves(board, piece, -1, -1);
-	kingMoves = kingMoves.concat(kingDirMoves.moves);
-	kingJumps = kingJumps.concat(kingDirMoves.jumps);
-
+	let kingDirMoves = [];
+	for(const vec of piece.vectors){
+		kingDirMoves = getKingDirectionMoves(board, piece, vec[0], vec[1]);
+		kingMoves = kingMoves.concat(kingDirMoves.moves);
+		kingJumps = kingJumps.concat(kingDirMoves.jumps);
+	}
 	return {moves: kingMoves, jumps: kingJumps};
-
-}
+};
 
 const getKingDirectionMoves = (board, piece, horDir, verDir) => {
 	console.log("Starting getKingDirectionMoves");
@@ -345,14 +331,14 @@ const getKingDirectionMoves = (board, piece, horDir, verDir) => {
 	}
 	console.log (`For this direction returning ${kingDirMoves.length} moves and ${kingDirJumps.length}`);
 	return {moves: kingDirMoves, jumps: kingDirJumps};
-}
+};
 
 const clearMoveClasses = () => {
 	$(".activePiece").removeClass("activePiece");
 	$(".selectedPiece").removeClass("selectedPiece");
 	$(".possibleDestination").removeClass("possibleDestination");
 	$(".selectedDestination").removeClass("selectedDestination");
-}
+};
 
 const moveThePieceCheckers = (piece, dest, board) => {
 	removeThePiece(piece.coords(), board);		
@@ -366,6 +352,7 @@ const moveThePieceCheckers = (piece, dest, board) => {
 				removeThePiece(strikeCoords, board);
 			}
 		}
+		piece.justMoved = true;
 	}
 	piece.hor = dest.hor;
 	piece.ver = dest.ver;
@@ -378,7 +365,6 @@ const moveThePieceCheckers = (piece, dest, board) => {
 	}
 	htmlElem = getPieceHtmlElem(piece);
 	htmlElem.innerHTML = piece.character();
-
 	htmlElem.classList.add("populated","movedPiece");
 	board.contents[dest.hor-1][dest.ver-1] = piece;	
-}
+};

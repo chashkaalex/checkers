@@ -1,21 +1,3 @@
-const whiteMan =  			String.fromCharCode(parseInt('26c0', 16));	//'\u26c0';
-const whiteKing = 			String.fromCharCode(parseInt('26c1', 16));	//'\u26c1';
-const blackMan =  			String.fromCharCode(parseInt('26c2', 16));	//'\u26c2';
-const blackKing = 			String.fromCharCode(parseInt('26c3', 16));	//'\u26c3';
-const whiteChessKing = 		'\u2654';
-const whiteQueen =     		'\u2655';
-const whiteRook =      		'\u2656';
-const whiteBishop =    		'\u2657';
-const whiteKnight =    		'\u2658';
-const whitePawn = 	   		'\u2659';
-const blackChessKing = 		'\u265a';
-const blackQueen =     		'\u265b';
-const blackRook =      		'\u265c';
-const blackBishop =    		'\u265d';
-const blackKnight =    		'\u265e';
-const blackPawn =      		'\u265f';
-
-
 
 class ChessBoard {
 	constructor() {		
@@ -26,7 +8,7 @@ class ChessBoard {
 						 ["5,1", "5,2", "5,3", "5,4", "5,5", "5,6", "5,7", "5,8"],
 						 ["6,1", "6,2", "6,3", "6,4", "6,5", "6,6", "6,7", "6,8"],
 						 ["7,1", "7,2", "7,3", "7,4", "7,5", "7,6", "7,7", "7,8"],
-						 ["8,1", "8,2", "8,3", "8,4", "8,5", "8,6", "8,7", "8,8"]]
+						 ["8,1", "8,2", "8,3", "8,4", "8,5", "8,6", "8,7", "8,8"]];
 	}
 }
 
@@ -72,7 +54,7 @@ class GameCheckers extends Game {
 	}
 
 	async moveProcedure(game, player) {
-		await moveProcedureCheckers(game, player)
+		await moveProcedureCheckers(game, player);
 	}
 }
 
@@ -85,7 +67,7 @@ class GameKnightChase extends Game {
 		populateBoardKnightChase(this.board);
 	}
 	async moveProcedure(game, player) {
-		await moveProcedureKnightChase(game, player)
+		await moveProcedureKnightChase(game, player);
 	}
 	
 }
@@ -97,8 +79,34 @@ class GameChess extends Game {
 	populateBoard(){
 		populateBoardChess(this.board);
 	}
+	
+	async moveProcedure(game, player) {
+		await moveProcedureChess(game, player);
+	}	
 }
 
+class NullGame extends Game {
+	constructor(player1Name, player2Name) {
+		super(player1Name, player2Name)
+	}
+	isEnded = true;
+}
+
+const gameClasses = {
+    GameCheckers,
+    GameKnightChase,
+	GameChess
+};
+
+class DynamicGameClass {
+    constructor (className, player1Name, player2Name) {		
+		if (className in gameClasses) {
+			console.log("This game exists!");
+			return new gameClasses[className](player1Name, player2Name);			
+		}
+		return new NullGame(player1Name, player2Name);
+    }
+}
 //---------Piece Classes----------------------------------
 
 class Piece {
@@ -120,31 +128,24 @@ class CheckerPiece extends Piece {
 	constructor(color, hor, ver) {
 		super(color, hor, ver)		
 	}	
+	
+	justMoved = false;
 	isKing = false;	
-	// coords() {
-		// return {hor: this.hor, ver: this.ver};
-	// }
+	vectors = [[-1,-1],[-1,1],[1,1],[1,-1]];
 	
 	d() {
 		return (this.color === 'white') ? 1 : -1;		//'d' is a movement direction 
 	}
 	
-	eligibleMoves(chainMove) {		//chainmove is a boolean that determines if current move is a chain and thus the piece can also move backwards
-		const moveArray = [];			//it also can be used to exercise the 'striking back' rule if needed.	
+	eligibleMoves() {	
+		const moveArray = [];				
 		if (this.isKing) {
 			for(let i=1;i<8;i++) {
-				if (withinBoard(this.hor+i , this.ver+i)){			
-					moveArray.push({hor: this.hor+i , ver: this.ver+i});
-				}
-				if (withinBoard(this.hor-i , this.ver+i)){			
-					moveArray.push({hor: this.hor-i , ver: this.ver+i});
-				}
-				if (withinBoard(this.hor+i , this.ver-i)){			
-					moveArray.push({hor: this.hor+i , ver: this.ver-i});
-				}
-				if (withinBoard(this.hor-i , this.ver-i)){			
-					moveArray.push({hor: this.hor-i , ver: this.ver-i});
-				}
+				for(const vec of this.vectors){
+					if (withinBoard(this.hor+vec[0]*i , this.ver+vec[1]*i)){
+						moveArray.push({hor: this.hor+vec[0]*i , ver: this.ver+vec[1]*i});
+					}
+				}				
 			}
 		} else {
 			if (withinBoard(this.hor+1 , this.ver+this.d())){			
@@ -154,7 +155,7 @@ class CheckerPiece extends Piece {
 				moveArray.push({hor: this.hor-1 , ver: this.ver+this.d()});
 			}
 			
-			if(chainMove) {								
+			if(this.justMoved) {								
 				if (withinBoard(this.hor+1 , this.ver-this.d())){			
 					moveArray.push({hor: this.hor+1 , ver: this.ver-this.d()});
 				}
@@ -163,7 +164,7 @@ class CheckerPiece extends Piece {
 				}
 			}
 		}
-		return (moveArray)
+		return (moveArray);
 	}
 	
 	character() {
@@ -178,14 +179,34 @@ class CheckerPiece extends Piece {
 
 //---------Chess Piece Classes----------------------------------
 
+
+class KingPiece extends Piece {
+	constructor(color, hor, ver) {
+		super(color, hor, ver)
+	}
+	vectors = [[-1,-1],[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1]];
+	eligibleMoves() {
+		const moveArray = [];
+			for(const vec of this.vectors){
+				if (withinBoard(this.hor+vec[0] , this.ver+vec[1])){
+					moveArray.push({hor: this.hor+vec[0] , ver: this.ver+vec[1]});
+				}
+			}
+		return (moveArray);
+	}
+	character() {
+		return((this.color === 'white') ? whiteChessKing : blackChessKing);
+	}
+}
+
 class KnightPiece extends Piece {
 	constructor(color, hor, ver) {
 		super(color, hor, ver)
 	}
-	eligibleMoves() {
-		const vectors = [[-1,-2],[-2,-1],[-2,1],[-1,2],[1,2],[2,1],[2,-1],[1,-2]];
-		let moveArray = [];
-			for(const vec of vectors){
+	vectors = [[-1,-2],[-2,-1],[-2,1],[-1,2],[1,2],[2,1],[2,-1],[1,-2]];
+	eligibleMoves() {		
+		const moveArray = [];
+			for(const vec of this.vectors){
 				if (withinBoard(this.hor+vec[0] , this.ver+vec[1])){
 					moveArray.push({hor: this.hor+vec[0] , ver: this.ver+vec[1]});
 				}
@@ -197,21 +218,112 @@ class KnightPiece extends Piece {
 	}
 }
 
-class ChessKingPiece extends Piece {
+class BishopPiece extends Piece {
 	constructor(color, hor, ver) {
 		super(color, hor, ver)
 	}
+	vectors = [[-1,-1],[-1,1],[1,1],[1,-1]];
 	eligibleMoves() {
-		const vectors = [[-1,-1],[-1,-0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-0]];
-		let moveArray = [];
-			for(const vec of vectors){
+		const moveArray = [];
+		for(let i=1;i<8;i++) {
+			for(const vec of this.vectors){
 				if (withinBoard(this.hor+vec[0] , this.ver+vec[1])){
 					moveArray.push({hor: this.hor+vec[0] , ver: this.ver+vec[1]});
 				}
 			}
+		}
 		return (moveArray);
 	}
 	character() {
-		return((this.color === 'white') ? whiteChessKing : blackChessKing);
+		return((this.color === 'white') ? whiteBishop : blackBishop);
 	}
+}
+
+class RookPiece extends Piece {
+	constructor(color, hor, ver) {
+		super(color, hor, ver)
+	}
+	vectors = [[-1,0],[0,1],[1,0],[0,-1]];
+	eligibleMoves() {
+		const moveArray = [];
+		for(let i=1;i<8;i++) {
+			for(const vec of this.vectors){ 
+				if (withinBoard(this.hor+vec[0]*i , this.ver+vec[1]*i)){
+					moveArray.push({hor: this.hor+vec[0]*i , ver: this.ver+vec[1]*i});
+				}				
+			}			
+		}
+		return (moveArray);
+	}
+	character() {
+		return((this.color === 'white') ? whiteRook : blackRook);
+	}
+}
+
+class QueenPiece extends Piece {
+	constructor(color, hor, ver) {
+		super(color, hor, ver)
+	}
+	vectors = [[-1,-1],[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1]];
+	eligibleMoves() {
+		const moveArray = [];
+		for(let i=1;i<8;i++) {
+			for(const vec of this.vectors){ 
+				if (withinBoard(this.hor+vec[0]*i , this.ver+vec[1]*i)){
+					moveArray.push({hor: this.hor+vec[0]*i , ver: this.ver+vec[1]*i});
+				}				
+			}
+		}
+		return (moveArray);
+	}
+	character() {
+		return((this.color === 'white') ? whiteQueen : blackQueen);
+	}
+}
+
+class PawnPiece extends Piece {
+	constructor(color, hor, ver) {
+		super(color, hor, ver)
+	}	
+	
+	hasMoved = false;	
+	doubleMoved = false;
+
+	d() {
+			return (this.color === 'white') ? 1 : -1;		//'d' is a movement direction 
+		}	
+	eligibleMoves() {
+		const moveArray = [];
+		if (withinBoard(this.hor , this.ver+this.d())) {			
+			moveArray.push({hor: this.hor, ver: this.ver+this.d()});
+			if (!this.hasMoved) {
+				moveArray.push({hor: this.hor, ver: this.ver+2*this.d()});
+			}
+		}
+		if (withinBoard(this.hor+1 , this.ver+this.d())) {
+			moveArray.push({hor: this.hor+1, ver: this.ver+this.d()});			
+		}
+		if (withinBoard(this.hor-1 , this.ver+this.d())) {
+			moveArray.push({hor: this.hor-1, ver: this.ver+this.d()});			
+		}
+		return (moveArray);
+	}
+	character() {
+		return((this.color === 'white') ? whitePawn : blackPawn);
+	}
+}
+
+const chessClasses = {
+    PawnPiece,
+    KnightPiece,
+	BishopPiece,
+	RookPiece,
+	QueenPiece,
+	KingPiece
+};
+
+class DynamicChessClass {
+    constructor (className, color, hor, ver) {
+        return new chessClasses[className](color, hor, ver);
+    }
 }

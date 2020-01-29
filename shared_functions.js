@@ -14,7 +14,7 @@ const letThemPlay = async (game, player) => {
 		console.log("Next move: ", player.color);
 		i++;
 	}	
-}
+};
 
 const emptyTheBoard = () => {
 	$(".chessboard div")
@@ -26,20 +26,20 @@ const emptyTheBoard = () => {
 			"movedPiece",
 			"populated")
 		.html("");
-}
+};
 
 const getPieceHtmlElem = (piece) => {
 	const coordString = (piece.hor)+ ',' + (piece.ver);
 	//console.log('	The coords are ' + coordString)
 	return document.getElementById(coordString);
-}
+};
 
 const getPieceFromHtmlId = (id, board) => {
 	//console.log("Getting the piece from the id " + id)
 	const hor = parseInt(id[0])-1;
 	const ver = parseInt(id[2])-1;
 	return board.contents[hor][ver];
-}
+};
 
 const withinBoard = (hor, ver) => {
 	if(hor>0 && hor<9) {
@@ -48,14 +48,15 @@ const withinBoard = (hor, ver) => {
 		}
 	}
 	return false;
-}
+};
 
 const isVacant = (board, move) => {
+	//debugger;
 	if (typeof board.contents[move.hor-1][move.ver-1] === 'string'){
 		return true;
 	}
 	return false
-}
+};
 
 const isFoe = (board, move, color) => {
 	const tile = board.contents[move.hor-1][move.ver-1];
@@ -65,7 +66,7 @@ const isFoe = (board, move, color) => {
 		}
 	}	
 	return false;
-}
+};
 
 const canJump = (board, move, piece) => {							//This function chechks is the piece can jump and if it can,
 	const jumpMove = {												// it modifies the destination ('move') appropriately
@@ -81,34 +82,34 @@ const canJump = (board, move, piece) => {							//This function chechks is the p
 		}
 	}	
 	return false;
-}
+};
 
 const onSelectPiece = (id) => {
 	//alert(id);
 	$(".selectedPiece").removeClass("selectedPiece");
 	document.getElementById(id).classList.add("selectedPiece");
-}
+};
 
 const onSelectDestination = (id) => {
 	//alert(id);
 	document.getElementById(id).classList.add("selectedDestination");
-}
+};
 
 const pieceIsSelected = () => {
 	return $(".chessboard div").hasClass('selectedPiece')
-}
+};
 
 const destinationSelected = () => {
 	return $(".chessboard div").hasClass('selectedDestination')
-}
+};
 
 const getSelectedElem = (className) => {	
 	return document.getElementsByClassName(className)[0];
-}
+};
 
 const removePrevPosDes = () => {
 	$(".possibleDestination").removeClass("possibleDestination");
-}
+};
 
 const removeThePiece = (coords, board) => {
 	const pieceToRemove = board.contents[coords.hor-1][coords.ver-1];
@@ -116,4 +117,4 @@ const removeThePiece = (coords, board) => {
 	htmlElem.innerHTML = "";
 	htmlElem.classList.remove("populated","movedPiece");
 	board.contents[coords.hor-1][coords.ver-1] = coords.hor + "," + coords.ver;
-}
+};
