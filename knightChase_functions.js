@@ -26,7 +26,7 @@ const moveProcedureKnightChase = (game, player) => {
 	const knightMoves = activeKnight.eligibleMoves()
 		setTimeout(function(){ 
 			//alert("Hello"); 
-			for (knightMove of knightMoves) {				
+			for (const knightMove of knightMoves) {				
 				if (isFoe(player.board, knightMove, player.color)) {					
 					moveThePieceKnightChase (activeKnight, knightMove, player.board);
 					game.isEnded = true;

@@ -184,6 +184,7 @@ class KingPiece extends Piece {
 	constructor(color, hor, ver) {
 		super(color, hor, ver)
 	}
+	inCheck = false;
 	vectors = [[-1,-1],[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1]];
 	eligibleMoves() {
 		const moveArray = [];
@@ -203,6 +204,7 @@ class KnightPiece extends Piece {
 	constructor(color, hor, ver) {
 		super(color, hor, ver)
 	}
+	hasMoved = false;
 	vectors = [[-1,-2],[-2,-1],[-2,1],[-1,2],[1,2],[2,1],[2,-1],[1,-2]];
 	eligibleMoves() {		
 		const moveArray = [];
@@ -243,6 +245,7 @@ class RookPiece extends Piece {
 	constructor(color, hor, ver) {
 		super(color, hor, ver)
 	}
+	hasMoved = false;
 	vectors = [[-1,0],[0,1],[1,0],[0,-1]];
 	eligibleMoves() {
 		const moveArray = [];
@@ -284,8 +287,7 @@ class QueenPiece extends Piece {
 class PawnPiece extends Piece {
 	constructor(color, hor, ver) {
 		super(color, hor, ver)
-	}	
-	
+	}		
 	hasMoved = false;	
 	doubleMoved = false;
 

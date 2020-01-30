@@ -51,6 +51,7 @@
 	background-color:lightblue;
 	box-sizing: border-box;
 	border: 1px solid lightgreen;
+	border-radius: 5px;
 	cursor: pointer;
   }
  
@@ -60,6 +61,9 @@
   
 .possibleDestination {
 	background-color: rgb(51, 204, 51);
+	box-sizing: border-box;
+	border: 1px solid grey;
+	border-radius: 5px;
 	cursor: pointer;
 }
 

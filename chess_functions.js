@@ -1,4 +1,3 @@
-var check = false;
 var checkmate = false;
 const pieceOrder = ['RookPiece','KnightPiece','BishopPiece','QueenPiece','KingPiece','BishopPiece','KnightPiece','RookPiece'];
 const populateBoardChess = (board) => {		
@@ -23,7 +22,7 @@ const populateTileChess = (board, pieceType, color, hor, ver) => {
 };
 
 const moveProcedureChess = async (game, player) => {
-	getPlayerActivePiecesChess(player);	
+	getPlayerActivePiecesChess(player);		
 	if(player.activePieces.length>0){
 		await getPlayerResponseChess(player);
 		if (!gameIsRunning || checkmate) {
@@ -93,12 +92,13 @@ const pawnCanMove = (board, move, piece) => {
 };
 
 const knightKingCanMove = (board, move, piece) => {
-	if(isVacant(board, move)) {
-		return true;
-	} else if(isFoe(board, move, piece.color)) {
-		return true;
-	}	
-	return false;
+	return isVacant(board, move) || isFoe(board, move, piece.color);
+	// if(isVacant(board, move)) {
+		// return true;
+	// } else if(isFoe(board, move, piece.color)) {
+		// return true;
+	// }	
+	// return false;
 };
 
 const getDynamicMoves = (board, piece) => {
@@ -192,7 +192,7 @@ const drawMovesChess = (board, piece) => {
 			}					
 		}
 	} else {
-		for (move of getDynamicMoves(board, piece)){
+		for (const move of getDynamicMoves(board, piece)){
 			const posDesElem = document.getElementById((move.hor)+','+(move.ver));
 			posDesElem.classList.add("possibleDestination");			
 		}
@@ -203,10 +203,10 @@ const moveThePieceChess = (piece, dest, board) => {
 	const pieceType = piece.constructor.name;
 	removeThePiece(piece.coords(), board);	
 	if(!isVacant(board, dest)) {
-		const takenPiece = getPieceFromHtmlId(dest.hor+','+dest.ver, board)
+		const takenPiece = getPieceFromHtmlId(dest.hor+','+dest.ver, board);
 		const takenPieceType = takenPiece.constructor.name;
 		removeThePiece(dest, board);
-		console.log(`${takenPiece.color} ${takenPieceType} was taken!`)
+		console.log(`${takenPiece.color} ${takenPieceType} was taken!`);
 		if (takenPieceType=== 'KingPiece') {
 			checkmate = true;
 		}

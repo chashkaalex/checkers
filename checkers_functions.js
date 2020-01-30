@@ -41,7 +41,7 @@ const moveProcedureCheckers = async (game, player) => {
 			game.isEnded = true;
 		}
 	}
-	if(!game.isEnded) {
+	if(!game.isEnded && pieceWasMoved()) {
 		const movedPieceElem = getSelectedElem("movedPiece");
 		const movedPiece = getPieceFromHtmlId(movedPieceElem.id, player.board);
 		while(moveIsCompelled) {

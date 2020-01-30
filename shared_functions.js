@@ -1,5 +1,6 @@
 const letThemPlay = async (game, player) => {		
 	let i = 1;
+
 	while(i<=maxMoves) {
 		if(game.isEnded) {
 			console.log("The game has ended!");
@@ -96,11 +97,15 @@ const onSelectDestination = (id) => {
 };
 
 const pieceIsSelected = () => {
-	return $(".chessboard div").hasClass('selectedPiece')
+	return $(".chessboard div").hasClass('selectedPiece');
 };
 
 const destinationSelected = () => {
-	return $(".chessboard div").hasClass('selectedDestination')
+	return $(".chessboard div").hasClass('selectedDestination');
+};
+
+const pieceWasMoved = () => {
+	return $(".chessboard div").hasClass('movedPiece');
 };
 
 const getSelectedElem = (className) => {	
